@@ -26,10 +26,10 @@ mongoose.connect("mongodb://localhost/news-scraper", { useNewUrlParser: true });
 
 // GET route for scraping website
 app.get("/scrape", function (req, res) {
-    axios.get("/").then(function (response) {
+    axios.get("http://www.echojs.com/").then(function (response) {
         var $ = cheerio.load(response.data);
 
-        $("artivle h2").each(function (i, element) {
+        $("article h2").each(function (i, element) {
             var result = {};
 
             result.title = $(this)
