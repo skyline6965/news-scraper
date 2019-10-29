@@ -20,7 +20,11 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost/news-scraper", { useNewUrlParser: true });
+// mongoose.connect("mongodb://localhost/news-scraper", { useUnifiedTopology: true });
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
 
 // routes
 
@@ -28,13 +32,18 @@ mongoose.connect("mongodb://localhost/news-scraper", { useNewUrlParser: true });
 app.get("/scrape", function (req, res) {
     axios.get("http://www.echojs.com/").then(function (response) {
         var $ = cheerio.load(response.data);
+        // console.log(response.data);
 
         $("article h2").each(function (i, element) {
             var result = {};
 
             result.title = $(this)
                 .children("a")
+                .text();
+            result.link = $(this)
+                .children("a")
                 .attr("href");
+                res.send()
 
             db.Article.create(result)
                 .then(function (dbArticle) {
@@ -84,9 +93,6 @@ app.post("/articles/:id", function (req, res) {
             res.json(err);
         });
 });
-
-
-
 
 // start server
 app.listen(PORT, function () {
